@@ -113,52 +113,44 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, apiKey }) => {
   };
 
   return (
-    <div ref={searchContainerRef} className="w-full max-w-md relative">
-      <form onSubmit={handleSubmit}>
-        <div className="relative">
+    <div className="flex justify-center items-center w-full">
+      <div ref={searchContainerRef} className="relative w-full max-w-md">
+        <form onSubmit={handleSubmit} className="relative">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setShowSuggestions(true)}
             placeholder="Search for a city..."
-            className="w-full px-4 py-2 pl-10 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm"
+            className="w-full px-4 py-2 pl-10 pr-4 text-gray-900 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <button
-            type="submit"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            Search
-          </button>
-        </div>
-      </form>
-
-      {showSuggestions && (query.length >= 2) && (
-        <div className="absolute w-full mt-1 bg-white rounded-lg shadow-lg overflow-hidden z-10">
-          {isLoading ? (
-            <div className="p-3 text-gray-500 text-center">Loading suggestions...</div>
-          ) : error ? (
-            <div className="p-3 text-red-500 text-center">{error}</div>
-          ) : suggestions.length > 0 ? (
-            <ul className="max-h-60 overflow-auto">
-              {suggestions.map((suggestion, index) => (
-                <li
-                  key={`${suggestion.name}-${suggestion.lat}-${suggestion.lon}-${index}`}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <span className="font-medium">{suggestion.name}</span>
-                  {suggestion.state && <span className="text-gray-600">, {suggestion.state}</span>}
-                  <span className="text-gray-600">, {suggestion.country}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="p-3 text-gray-500 text-center">No cities found</div>
+          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          {isLoading && (
+            <div className="absolute right-3 top-2.5">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+            </div>
           )}
-        </div>
-      )}
+        </form>
+
+        {error && (
+          <div className="mt-2 text-sm text-red-500">
+            {error}
+          </div>
+        )}
+
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg">
+            {suggestions.map((suggestion) => (
+              <button
+                key={`${suggestion.name}-${suggestion.country}`}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+              >
+                {suggestion.name}, {suggestion.country}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
